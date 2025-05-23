@@ -1,10 +1,10 @@
 # [level 1] 두 개 뽑아서 더하기 - 68644 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/68644) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/68644?language=cpp) 
 
 ### 성능 요약
 
-메모리: 4.14 MB, 시간: 0.40 ms
+메모리: 3.77 MB, 시간: 0.28 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 05월 23일 10:23:00
+2025년 05월 23일 10:28:34
 
 ### 문제 설명
 
