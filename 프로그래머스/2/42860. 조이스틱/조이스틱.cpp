@@ -1,147 +1,68 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
-struct Node
-{
-public:
-    string Name;
-    int Cursor;
-    int Movement;
-    
-    Node(int n) : Name(n, 'A') {}
-    bool operator <(const Node& Right) { return Movement > Right.Movement; }
-};
-
-class Solver
-{
-public:
-    void Push();
-    Node Pop();
-    Node& Top();
-    bool Empty() { return Queue.size() == 0; }
-    int Len;
-    Solver(int len) : Len(len) {}
-protected:
-    vector<Node> Queue;
-};
-
-void Solver::Push()
-{
-    Queue.emplace_back(Len);
-    push_heap(Queue.begin(), Queue.end());
-}
-
-Node Solver::Pop()
-{
-    pop_heap(Queue.begin(), Queue.end());
-    auto top = Queue.back();
-    Queue.pop_back();
-    return top;
-}
-
-Node& Solver::Top()
-{
-    return Queue.back();
-}
-
-int ABS(int x)
-{
-    return x >= 0 ? x : -x;
-}
-
 #include <iostream>
 
-int solution(string Name)
-{
-    int len = Name.size();
-    Solver MySolver(len);
+int solution(string name) {
+    if (name == "A")
+    {
+        return 0;
+    }
+    const char* Arr = name.c_str();
+    int len = name.size();
     
-    vector<int> DistanceArray(len, 0);
-    const char* Array = Name.c_str();
+    // 고정 비용
+    int fix = 0;
     for (int n=0; n<len; n++)
     {
-        int from = 'A' - 'A';
-        int to = Array[n] - 'A';
-        int up = ABS(to - from);
-        int down = ABS((from + ('Z' - 'A') + 1) - to);
-        DistanceArray[n] = up > down ? down : up;
+        int distance = Arr[n] - 'A';
+        fix += (distance <= 13 ? distance : 26 - distance);
     }
     
-    // 다양한 시작점이 있을 수 있다...
-    int A = -1;
+    // 변동 비용 - 최소값을 찾아야 함
+    int minCost = -1;
     for (int n=0; n<len; n++)
     {
-        MySolver.Push();
-        Node& First = MySolver.Top();
-        First.Cursor = n;
-        First.Movement = (n<=(len/2))?(n):(len-n);
-        int answer = First.Movement;
+        // 고리 안에서 min/max 사이의 거리를 계산해야 함
+        int min = -1;
+        int max = -1;
+        int full;
         
-        while (!MySolver.Empty())
+        // 정방향
+        for (int i=0; i<len; i++)
         {
-            Node Current = MySolver.Pop();
-
-            if (Current.Name == Name)
+            int c = (n + i)%len;
+            if (Arr[c] != 'A')
             {
-                break;
-            }
-            answer += DistanceArray[Current.Cursor];
-            Current.Name[Current.Cursor] = Name[Current.Cursor];
-
-            // 정방향
-            int forward = -1;
-            for (int n=1; n<len; n++)
-            {
-                int index = (Current.Cursor + n) % len;
-                if (Current.Name[index] != Name[index])
-                {
-                    forward = n;
-                    break;
-                }
-            }
-
-            // 역방향
-            int backward = -1;
-            for (int n=1; n<len; n++)
-            {
-                int index = (Current.Cursor - n + len) % len;
-                if (Current.Name[index] != Name[index])
-                {
-                    backward = n;
-                    break;
-                }
-            }
-
-            // 이동할 필요가 없다면 끝.
-            if (forward == -1 || backward == -1)
-            {
-                break;
-            }
-
-            // 가까운 방향으로 이동
-            if (forward <= backward)
-            {
-                MySolver.Push();
-                Node& Next = MySolver.Top();
-                Next.Cursor = (Current.Cursor + forward) % len;
-                Next.Name = Current.Name;
-                answer += forward;
-            }
-            else
-            {
-                MySolver.Push();
-                Node& Next = MySolver.Top();
-                Next.Cursor = (Current.Cursor - backward + len) % len;
-                Next.Name = Current.Name;
-                answer += backward;
+                min = (min == -1) ? (i) : (min > i ? i : min);
+                max = (max == -1) ? (i) : (max < i ? i : max);
             }
         }
-        // cout << "answer: " << answer << "\n";
-        if (A == -1) A = answer;
-        A = A > answer ? answer : A;
+        full = (max - min) 
+             + (n <= len/2 ? n : len - n)
+             + (min<(len-max)?min:(len-max));
+        if (minCost == -1) minCost = full;
+        minCost = full > minCost ? minCost : full;
+
+        // 역방향
+        min = -1;
+        max = -1;
+        for (int i=0; i<len; i++)
+        {
+            int c = (n - i + len)%len;
+            if (Arr[c] != 'A')
+            {
+                min = (min == -1) ? (i) : (min > i ? i : min);
+                max = (max == -1) ? (i) : (max < i ? i : max);
+            }
+        }
+        full = (max - min) 
+             + (n <= len/2 ? n : len - n)
+             + (min<(len-max)?min:(len-max));
+        if (minCost == -1) minCost = full;
+        minCost = full > minCost ? minCost : full;
     }
-    return A;
+    return fix + minCost;
 }
