@@ -1,87 +1,89 @@
 #include <string>
 #include <vector>
-#include <iostream>
-
-// 모든 코드에서 범위 체크 생략
 
 using namespace std;
 
-
-bool Checker(const char* Query, const char* Target, int Len)
+int solution(string s)
 {
-    for (int i = 0; i < Len; i++)
+    string output = "";
+    int idx = 0;
+    int len = s.size();
+    
+    while (idx < len)
     {
-        if (Query[i] != Target[i])
+        const char current = s[idx];
+        if ('0' <= current && current <= '9')
         {
-            return false;
+            output += current;
+            idx += 1;
+        }
+        else
+        {
+            int pos;
+            switch (current)
+            {
+            case 'z':
+                output += '0';
+                idx += 4;
+                break;
+            case 'o':
+                output += '1';
+                idx += 3;
+                break;
+            case 't':
+                pos = s.find("two", idx);
+                if (pos == idx)
+                {
+                    output += '2';
+                    idx += 3;
+                }
+                pos = s.find("three", idx);
+                if (pos == idx)
+                {
+                    output += '3';
+                    idx += 5;
+                }
+                break;
+            case 'f':
+                pos = s.find("four", idx);
+                if (pos == idx)
+                {
+                    output += '4';
+                    idx += 4;
+                }
+                pos = s.find("five", idx);
+                if (pos == idx)
+                {
+                    output += '5';
+                    idx += 4;
+                }
+                break;
+            case 's':
+                pos = s.find("six", idx);
+                if (pos == idx)
+                {
+                    output += '6';
+                    idx += 3;
+                }
+                pos = s.find("seven", idx);
+                if (pos == idx)
+                {
+                    output += '7';
+                    idx += 5;
+                }
+                break;
+            case 'e':
+                output += '8';
+                idx += 5;
+                break;
+            case 'n':
+                output += '9';
+                idx += 4;
+                break;
+            }
         }
     }
-    return true;
-}
-
-
-char Solver(const char* Query, const int InIndex, int& OutIndex)
-{
-    // 그냥 숫자일 경우
-    if ('0' <= Query[InIndex] && Query[InIndex] <= '9')
-    {
-        // 그대로 리턴
-        OutIndex += 1;
-        return Query[InIndex];
-    }
     
-    // 그렇지 않을 경우, 문자열 검사를 실행
-    if (Checker(Query + InIndex, "zero", 4)) {
-        OutIndex += 4;
-        return '0';
-    }
-    else if (Checker(Query + InIndex, "one", 3)) {
-        OutIndex += 3;
-        return '1';
-    }
-    else if (Checker(Query + InIndex, "two", 3)) {
-        OutIndex += 3;
-        return '2';
-    }
-    else if (Checker(Query + InIndex, "three", 5)) {
-        OutIndex += 5;
-        return '3';
-    }
-    else if (Checker(Query + InIndex, "four", 4)) {
-        OutIndex += 4;
-        return '4';
-    }
-    else if (Checker(Query + InIndex, "five", 4)) {
-        OutIndex += 4;
-        return '5';
-    }
-    else if (Checker(Query + InIndex, "six", 3)) {
-        OutIndex += 3;
-        return '6';
-    }
-    else if (Checker(Query + InIndex, "seven", 5)) {
-        OutIndex += 5;
-        return '7';
-    }
-    else if (Checker(Query + InIndex, "eight", 5)) {
-        OutIndex += 5;
-        return '8';
-    }
-    else if (Checker(Query + InIndex, "nine", 4)) {
-        OutIndex += 4;
-        return '9';
-    }
-}
-    
-int solution(string Input)
-{
-    const char* Question = Input.c_str();
-    int Cursor = 0;
-    int Answer = 0;
-    while (Cursor < Input.length())
-    {
-        Answer *= 10;
-        Answer += Solver(Question, Cursor, Cursor) - '0';
-    }
-    return Answer;
+    int answer = stoi(output);
+    return answer;
 }
