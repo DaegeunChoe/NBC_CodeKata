@@ -1,53 +1,61 @@
 #include <string>
 #include <vector>
+#include <cstdio>
 
 using namespace std;
 
-int solution(string Input)
+int solution(string s)
 {
-    const char* Query = Input.c_str();
-    int Length = Input.size();
+    int answer = 0;
     
-    int Cursor = 0;
-    char FirstChar;
-    int FirstCount;
-    int OtherCount = 0;
-    int Output = 0;
+    const char* input = s.c_str();
+    int len = s.size();
+    int idx = 0;
+    char first_char = 0;
+    int first_count;
+    int other_count;
     
-    bool bIsFirst = true;
-    while (Cursor < Length)
+    while (idx < len)
     {
-        if (bIsFirst)
+        char current = input[idx];
+        if (first_char == 0)
         {
-            bIsFirst = false;
-            FirstChar = Query[Cursor];
-            FirstCount = 1;
-            OtherCount = 0;
-            Cursor++;
+            first_char = current;
+            first_count = 1;
+            other_count = 0;
+            idx += 1;
             continue;
-        }
-        
-        if (Query[Cursor] == FirstChar)
-        {
-            FirstCount++;
         }
         else
         {
-            OtherCount++;
+            if (current == first_char)
+            {
+                first_count += 1;
+            }
+            else
+            {
+                other_count += 1;
+            }
+            
+            if (first_count == other_count)
+            {
+                answer += 1;
+                idx += 1;
+                first_char = 0;
+                continue;
+            }
+            else
+            {
+                idx += 1;
+                continue;
+            }
         }
-        
-        if (FirstCount == OtherCount)
-        {
-            bIsFirst = true;
-            Output++;
-        }
-        Cursor++;
     }
     
-    if (!bIsFirst)
+    if (first_char != 0)
     {
-        Output++;
+        answer += 1;
     }
     
-    return Output;
+    return answer;
 }
